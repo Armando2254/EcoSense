@@ -6,7 +6,8 @@ import '../global.css';
 
 export default function Layout() {
   const [fontsLoaded] = useFonts({
-    WorkSansMedium: require('../assets/fonts/Work-Sans-Medium.ttf'), // ajusta ruta si es necesario
+    WorkSansMedium: require('../assets/fonts/Work-Sans-Medium.ttf'),
+    WorkSansBlack: require('../assets/fonts/Work-Sans-Black.ttf'), // ajusta ruta si es necesario
   });
 
   if (!fontsLoaded) {

@@ -10,7 +10,7 @@ module.exports = {
     extend: {
 
       colors: {
-        primary: '#5da96b',
+        primary: '#35674B',
         secondary: {
           DEFAULT: '#3d7697',
           100: '#C51297',
@@ -25,6 +25,7 @@ module.exports = {
 
       fontFamily: {
         'work-medium': [ 'WorkSansMedium', 'sans-serif' ],
+        'work-black': ['WorkSansBlack', 'sans-serif'],
       }
 
 
