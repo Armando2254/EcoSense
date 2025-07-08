@@ -24,17 +24,22 @@ export default function Login() {
           {/* Contenido central */}
           <View className="items-start gap-5 mt-10 p-5">
             <View className='flex-row'>
-              <Text className='font-work-black text-4xl text-[#343538]'>Log In</Text>
+              <Text className='font-work-black text-4xl text-[#343538]'>Register</Text>
               <Image
               source={require('../assets/images/Login.png')}
               className="w-10 h-10 scale-90"
               resizeMode="cover"
               /></View>
-              <Text>Email</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola</TextInput>
+            <Text>Nombre</Text>
+            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Nombre" placeholderTextColor="#A0A0A0" />
+            <Text>Apellido Paterno</Text>
+            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Apellido Paterno" placeholderTextColor="#A0A0A0" />
+            <Text>Apellido Materno</Text>
+            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Apellido Materno" placeholderTextColor="#A0A0A0" />
+            <Text>Email</Text>
+            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Email" placeholderTextColor="#A0A0A0" />
             <Text>Password</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola</TextInput>
-          
+            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Password" placeholderTextColor="#A0A0A0" />
             <CustomButton
               onPress={() => router.push('/login')}
               color="primary"

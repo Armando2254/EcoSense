@@ -30,10 +30,11 @@ export default function Login() {
               className="w-10 h-10 scale-90"
               resizeMode="cover"
               /></View>
-              <Text>Email</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola me llamo carlos </TextInput>
+            <Text>Email</Text>
+            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Email" placeholderTextColor="#A0A0A0" />
+            
             <Text>Password</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola me llamo carlos</TextInput>
+            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Password" placeholderTextColor="#A0A0A0" />
 
             <CustomButton
               onPress={() => router.push('/(tab)')}
