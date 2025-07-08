@@ -31,10 +31,10 @@ export default function Login() {
               resizeMode="cover"
               /></View>
               <Text>Email</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola</TextInput>
+            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola me llamo carlos </TextInput>
             <Text>Password</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola</TextInput>
-          
+            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola me llamo carlos</TextInput>
+
             <CustomButton
               onPress={() => router.push('/login')}
               color="primary"
