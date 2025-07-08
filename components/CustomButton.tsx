@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, PressableProps } from 'react-native';
 
 interface Props extends PressableProps {
-  children: string;
+  children: React.ReactNode;
   color?: 'primary' | `secondary` | 'tertiary';
 
   variant?: 'contained' | 'text-only';

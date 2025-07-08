@@ -25,32 +25,26 @@ export default function Login() {
           <View className="items-start gap-5 mt-10 p-5">
             <View className='flex-row'>
               <Text className='font-work-black text-4xl text-[#343538]'>Register</Text>
-              <Image
-              source={require('../assets/images/Login.png')}
-              className="w-10 h-10 scale-90"
-              resizeMode="cover"
-              /></View>
-            <Text>Nombre</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Nombre" placeholderTextColor="#A0A0A0" />
-            <Text>Apellido Paterno</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Apellido Paterno" placeholderTextColor="#A0A0A0" />
-            <Text>Apellido Materno</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Apellido Materno" placeholderTextColor="#A0A0A0" />
+              </View>
+            <Text>Full Name</Text>
+            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Full Name" placeholderTextColor="#A0A0A0" />
             <Text>Email</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Email" placeholderTextColor="#A0A0A0" />
+            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Email" placeholderTextColor="#A0A0A0" />
+            
             <Text>Password</Text>
-            <TextInput className='w-80 bg-[#374B40] rounded-md' placeholder="Password" placeholderTextColor="#A0A0A0" />
+            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Password" placeholderTextColor="#A0A0A0" />
+
             <CustomButton
-              onPress={() => router.push('/login')}
+              onPress={() => router.push('/(tab)')}
               color="primary"
               className="w-[272px]"
             >
               Login
             </CustomButton>
-
-            <TouchableOpacity>ola</TouchableOpacity>
-            
     
+            <TouchableOpacity onPress={() => router.push('/forgot')}>
+              <Text className='underline'>Forgot password?</Text>
+            </TouchableOpacity>
             
           </View>
         </SafeAreaView>
