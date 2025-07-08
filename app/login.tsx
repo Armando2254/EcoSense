@@ -36,7 +36,7 @@ export default function Login() {
             <TextInput className='w-80 bg-[#374B40] rounded-md'>hola</TextInput>
           
             <CustomButton
-              onPress={() => router.push('/login')}
+              onPress={() => router.push('/(tab)')}
               color="primary"
               className="w-[272px]"
             >
