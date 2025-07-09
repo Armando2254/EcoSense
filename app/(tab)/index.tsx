@@ -31,6 +31,7 @@ const minTranslateY = screenHeight - imageHeight; // ex: 844 - 1000 = -156
 
   const [modalVisible, setModalVisible] = useState(false);
   const [infoPin, setInfoPin] = useState('');
+  const [porcentaje, setPorcentaje] = useState('');
 
 
 const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
@@ -80,8 +81,8 @@ const panResponder = useRef(
 
   // Aquí defines la posición del pin respecto a la imagen
   const pines = [
-    { id: 'pin1', top: 200, left: 150, texto: 'Pin 1' },
-    { id: 'pin2', top: 500, left: 300, texto: 'Pin 2' },
+    { id: 'pin1', top: 200, left: 150, texto: 'Pin 1', nombre: 'Contenedor 1 - Tienda San Miguel', porcentaje: '20%' },
+    { id: 'pin2', top: 500, left: 300, texto: 'Pin 2',nombre: 'Contenedor 2 - Ferreteria Los Alamos', porcentaje: '80%' },
   ];
 
   return (
@@ -104,8 +105,10 @@ const panResponder = useRef(
           <Pressable
             key={pin.id}
             onPress={() => {
-              setInfoPin(pin.texto);
+              setInfoPin(pin.nombre);
               setModalVisible(true);
+              setPorcentaje(pin.porcentaje);
+
             }}
             style={{
               position: 'absolute',
@@ -132,28 +135,51 @@ const panResponder = useRef(
         onRequestClose={() => setModalVisible(false)}
       >
         <View className="flex-1 justify-center items-center bg-black/40">
-          <View className="bg-white p-5 rounded-xl  w-96 h-96">
+          <View className="bg-white p-5 rounded-xl  w-96 h-96 items-center">
             <Text className="text-lg mb-3">{infoPin}</Text>
             <View className='flex-row'>
-              <Image source={require('../../assets/images/cont.jpg')} className='w-36 h-36'></Image>
-              <View className='gap-1'>
-                <Text className='font-work-medium text-xl'>ola</Text>
-                <Text className='bg-orange-400 w-52 rounded-md p-2 font-work-medium text-xl'>ola</Text>
-              <Text className='font-work-medium text-xl'>ola</Text>
-              <Text className='bg-orange-400 w-52 rounded-md p-2 font-work-medium text-xl'>ola</Text>
+              <Image source={require('../../assets/images/cont.jpg')} className='w-28 h-36 scale-120'></Image>
+              <View className='gap-4'>
+                <Text className='bg-gray-300 w-60 rounded-md p-2 font-work-medium textm mt-5'>Porcentaje de llenado: {porcentaje}</Text>
+              <Text className='bg-gray-300 w-52 rounded-md p-2 font-work-medium text-m '>Ubicacion: Calle Pasaje Emilio Jaramillo</Text>
               </View>
               
             </View>
+<View className='flex-row mt-5 gap-3'>
+              <Text className='bg-gray-300 w-40 rounded-md p-2 font-work-medium text-m '>latitud: 102.2021</Text>
+              <Text className='bg-gray-300 w-40 rounded-md p-2 font-work-medium text-m '>longitud: -53.2144</Text>
+</View>
 
-            <Pressable
-              className="bg-blue-500 px-4 py-2 rounded"
+<View className='flex-row mt-5 gap-20'>
+  <Pressable
+              className="bg-green-500 px-4 py-2 rounded"
               onPress={() => setModalVisible(false)}
             >
-              <Text className="text-white">Cerrar</Text>
+              <Text className="text-white">Aceptar</Text>
             </Pressable>
+
+
+            <Pressable
+              className="bg-red-500 px-4 py-2 rounded"
+              onPress={() => {
+                setPorcentaje('0%')
+              }
+                
+              }
+              
+            >
+              <Text className="text-white">Vaciar</Text>
+            </Pressable>
+</View>
+
+            
           </View>
         </View>
       </Modal>
     </View>
   );
 }
+
+
+
+
