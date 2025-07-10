@@ -36,13 +36,8 @@ export default function Login() {
             <Text>Password</Text>
             <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Password" placeholderTextColor="#A0A0A0" />
 
-            <CustomButton
-              onPress={() => router.push('/(tab)')}
-              color="primary"
-              className="w-[272px]"
-            >
-              Login
-            </CustomButton>
+            <CustomButton onPress={() => router.push('/(tab)')}
+            color="primary" className="w-[272px]">Login</CustomButton>
     
             <TouchableOpacity onPress={() => router.push('/forgot')}>
               <Text className='underline'>Forgot password?</Text>

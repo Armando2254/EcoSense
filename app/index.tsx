@@ -41,11 +41,7 @@ export default function Index() {
         <CustomButton
           onPress={() => router.push('/register')}
           color="primary"
-          className="w-[272px]"
-        >
-          Register
-        </CustomButton>
-      </View>
-    </SafeAreaView>
+          className="w-[272px]">
+          Register</CustomButton></View></SafeAreaView>
   );
 };
