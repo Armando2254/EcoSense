@@ -24,27 +24,28 @@ export default function Login() {
           {/* Contenido central */}
           <View className="items-start gap-5 mt-10 p-5">
             <View className='flex-row'>
-              <Text className='font-work-black text-4xl text-[#343538]'>Register</Text>
-              </View>
-            <Text>Full Name</Text>
-            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Full Name" placeholderTextColor="#A0A0A0" />
-            <Text>Email</Text>
-            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Email" placeholderTextColor="#A0A0A0" />
-            
+              <Text className='font-work-black text-4xl text-[#343538]'>Log In</Text>
+              <Image
+              source={require('../assets/images/Login.png')}
+              className="w-10 h-10 scale-90"
+              resizeMode="cover"
+              /></View>
+              <Text>Email</Text>
+            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola</TextInput>
             <Text>Password</Text>
-            <TextInput className='w-80 bg-[#ffffff] rounded-md' placeholder="Password" placeholderTextColor="#A0A0A0" />
-
+            <TextInput className='w-80 bg-[#374B40] rounded-md'>hola</TextInput>
+          
             <CustomButton
-              onPress={() => router.push('/(tab)')}
+              onPress={() => router.push('/login')}
               color="primary"
               className="w-[272px]"
             >
               Login
             </CustomButton>
+
+            
+            
     
-            <TouchableOpacity onPress={() => router.push('/forgot')}>
-              <Text className='underline'>Forgot password?</Text>
-            </TouchableOpacity>
             
           </View>
         </SafeAreaView>
