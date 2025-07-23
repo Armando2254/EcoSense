@@ -17,7 +17,7 @@ export default function PerfilScreen() {
           
           <Text style={styles.titulo}>Profile</Text>
           
-          <View style={styles.filaInfo}>
+          <View style={styles.filaInfo}>  
             <Text style={styles.etiqueta}>Nombre:</Text>
             <Text style={styles.valor}>Perez Lopez Luisa</Text>
           </View>
