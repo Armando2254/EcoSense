@@ -1,185 +1,176 @@
-import React, { useRef, useState } from 'react';
-import {
-  View,
-  Image,
-  PanResponder,
-  Animated,
-  Dimensions,
-  Pressable,
-  Text,
-  Modal,
-} from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import MapView, {Marker, Polyline} from 'react-native-maps';
+import axios from 'axios';
+import { ContenedorModal } from "../../components/ContenedorModal";
+import { useLocalSearchParams } from 'expo-router';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+
 
 export default function Index() {
-const imageWidth = 1000;
-const imageHeight = 1000;
+  const { id } = useLocalSearchParams();
 
-const maxTranslateX = 0;
-const minTranslateX = screenWidth - imageWidth; // ex: 390 - 1000 = -610
+const idFinal = Array.isArray(id) ? id[0] : id;
+    const [modalVisible, setModalVisible] = useState(false);
+  const [contenedorSeleccionado, setContenedorSeleccionado] = useState<{ id: string;
+  nombre: string;
+  status: string;
+  distancia: number;
+  porcentajeActual: number;
+  fechaUltimaLectura: Date;
+  ubicacionNombre: string;
+  ubicacionLatitud: number;
+  ubicacionLongitud: number;
+  idRecolector: string; } | null>(null);
+    const abrirModal = (id: string,
+  nombre: string,
+  status: string,
+  distancia: number,
+  porcentajeActual: number,
+  fechaUltimaLectura: Date,
+  ubicacionNombre: string,
+  ubicacionLatitud: number,
+  ubicacionLongitud: number,
+idRecolector: string) => {
+    setContenedorSeleccionado({id,
+  nombre,
+  status,
+  distancia,
+  porcentajeActual,
+  fechaUltimaLectura,
+  ubicacionNombre,
+  ubicacionLatitud,
+  ubicacionLongitud,
+idRecolector,});
+    setModalVisible(true);
+  };
 
-const maxTranslateY = 0;
-const minTranslateY = screenHeight - imageHeight; // ex: 844 - 1000 = -156
+
+  type Contenedor = {
+    id: string,
+    nombre: string,
+    ubicacion: {
+        longitud: number,
+        latitud: number,
+        nombre: string,
+        }
+    status: string,
+    distancia: number,
+    porcentajeActual: number,
+    fechaUltimaLectura: Date
+   
+};
+
+  const [datos, setDatos] = useState<Contenedor[]>([]);
+
+  useEffect(()=>{
+    const getAPIdata = async () => {
+    try {
+      const baseURL = "http://192.168.1.68:7168/api";
+      const ApiUrl = "/Contenedor"
+      const result = await axios.get(baseURL+ApiUrl);
+      console.warn("Datos recibidos:", result.data);
+
+      setDatos(result.data);
+    } catch (error) {
+      console.error("Error al obtener los datos", error);
+    }
+
+    
+  };
+
+  getAPIdata();
+  },[]) 
 
 
 
 
 
-
-
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [infoPin, setInfoPin] = useState('');
-  const [porcentaje, setPorcentaje] = useState('');
-
-
-const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
-
-// Guarda la posición acumulada en una ref manual
-const position = useRef({ x: 0, y: 0 }).current;
-
-const panResponder = useRef(
-  PanResponder.create({
-    onMoveShouldSetPanResponder: () => true,
-
-    onPanResponderGrant: () => {
-      pan.setOffset({ x: position.x, y: position.y });
-      pan.setValue({ x: 0, y: 0 }); // reinicia el delta
-    },
-
-    onPanResponderMove: (_, gestureState) => {
-      let newX = position.x + gestureState.dx;
-      let newY = position.y + gestureState.dy;
-
-      // Limitar dentro de los bordes
-      const clampedX = Math.min(Math.max(newX, minTranslateX), maxTranslateX);
-      const clampedY = Math.min(Math.max(newY, minTranslateY), maxTranslateY);
-
-      // Aplica delta relativo
-      pan.setValue({
-        x: clampedX - position.x,
-        y: clampedY - position.y,
-      });
-    },
-
-    onPanResponderRelease: () => {
-      pan.flattenOffset();
-
-      // Agrega el delta acumulado manualmente
-      pan.extractOffset(); // para mantener visual correctamente
-      pan.addListener((val) => {
-        position.x = val.x;
-        position.y = val.y;
-      });
-    },
+  const [origin, setOrigin] = React.useState({
+    latitude: 32.4578,
+    longitude:-116.8272,
   })
-).current;
+
+ 
+  const [destination , setDestination] = React.useState({
+    latitude: 32.4578,
+    longitude:-116.8272,
+  })
+  
 
 
-
-
-  // Aquí defines la posición del pin respecto a la imagen
-  const pines = [
-    { id: 'pin1', top: 200, left: 150, texto: 'Pin 1', nombre: 'Contenedor 1 - Tienda San Miguel', porcentaje: '20%' },
-    { id: 'pin2', top: 500, left: 300, texto: 'Pin 2',nombre: 'Contenedor 2 - Ferreteria Los Alamos', porcentaje: '80%' },
-  ];
-
-  return (
-    <View className="flex-1 bg-white">
-      <Animated.View className={'w-[936] h-[541] '}
-        style={[
-          {
-           transform: [{ translateX: pan.x }, { translateY: pan.y }],
-          },
-        ]}
-        {...panResponder.panHandlers}
-      >
-        {/* Imagen base */}
-        <Image
-           source={require('../../assets/images/Mapa.png')} className='w-[1000] h-[1000] absolute'
-        />
-
-        {/* Pines */}
-        {pines.map((pin) => (
-          <Pressable
-            key={pin.id}
-            onPress={() => {
-              setInfoPin(pin.nombre);
-              setModalVisible(true);
-              setPorcentaje(pin.porcentaje);
-
-            }}
-            style={{
-              position: 'absolute',
-              top: pin.top,
-              left: pin.left,
-              width: 30,
-              height: 30,
-              borderRadius: 15,
-              backgroundColor: 'red',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 12 }}>📍</Text>
-          </Pressable>
-        ))}
-      </Animated.View>
-
-      {/* Modal */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View className="flex-1 justify-center items-center bg-black/40">
-          <View className="bg-white p-5 rounded-xl  w-96 h-96 items-center">
-            <Text className="text-lg mb-3">{infoPin}</Text>
-            <View className='flex-row'>
-              <Image source={require('../../assets/images/cont.jpg')} className='w-28 h-36 scale-120'></Image>
-              <View className='gap-4'>
-                <Text className='bg-gray-300 w-60 rounded-md p-2 font-work-medium textm mt-5'>Porcentaje de llenado: {porcentaje}</Text>
-              <Text className='bg-gray-300 w-52 rounded-md p-2 font-work-medium text-m '>Ubicacion: Calle Pasaje Emilio Jaramillo</Text>
-              </View>
+  return(
+    <View className='flex-1 items-center justify-center'>
+      <MapView style={styles.map} region={{
+        
+        latitude: origin.latitude,
+      longitude: origin.longitude,
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.01
+    
+      }}
+       customMapStyle={require('../../assets/mapaEstilo.json')}>
+        {
+        datos ?
+        datos.map((contenedor) => (
+            <Marker key={contenedor.id} coordinate={{latitude: contenedor.ubicacion.latitud, longitude: contenedor.ubicacion.longitud}} onPress={() => abrirModal(
               
-            </View>
-<View className='flex-row mt-5 gap-3'>
-              <Text className='bg-gray-300 w-40 rounded-md p-2 font-work-medium text-m '>latitud: 102.2021</Text>
-              <Text className='bg-gray-300 w-40 rounded-md p-2 font-work-medium text-m '>longitud: -53.2144</Text>
-</View>
-
-<View className='flex-row mt-5 gap-20'>
-  <Pressable
-              className="bg-green-500 px-4 py-2 rounded"
-              onPress={() => setModalVisible(false)}
-            >
-              <Text className="text-white">Aceptar</Text>
-            </Pressable>
-
-
-            <Pressable
-              className="bg-red-500 px-4 py-2 rounded"
-              onPress={() => {
-                setPorcentaje('0%')
-              }
-                
-              }
               
-            >
-              <Text className="text-white">Vaciar</Text>
-            </Pressable>
-</View>
+              contenedor.id, contenedor.nombre, contenedor.status, contenedor.distancia, contenedor.porcentajeActual,  contenedor.fechaUltimaLectura, contenedor.ubicacion.nombre, contenedor.ubicacion.latitud,contenedor.ubicacion.longitud, idFinal 
 
-            
-          </View>
-        </View>
-      </Modal>
+
+            )} pinColor={contenedor.status=="en uso" ? "#2ee16a" : "rojo"}></Marker>
+         
+        ))
+        : null
+      }
+        
+        
+
+      
+      
+      </MapView>
+{contenedorSeleccionado && (
+  <ContenedorModal
+    visible={modalVisible}
+    onClose={() => setModalVisible(false)}
+    id={contenedorSeleccionado.id}
+    nombre={contenedorSeleccionado.nombre}
+    status={contenedorSeleccionado.status}
+    distancia={contenedorSeleccionado.distancia}
+    porcentajeActual={contenedorSeleccionado.porcentajeActual}
+    fechaUltimaLectura={contenedorSeleccionado.fechaUltimaLectura}
+    ubicacion={{
+      latitud: contenedorSeleccionado.ubicacionLatitud,
+      longitud: contenedorSeleccionado.ubicacionLongitud,
+      nombre: contenedorSeleccionado.ubicacionNombre
+    }}
+    idRecolector={idFinal}
+  />
+)}
+
     </View>
   );
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+const styles = StyleSheet.create({
+  map: {
+    width: '100%',  // igual a w-72
+    height: '100%', // igual a h-72
+  },
+});
 
 
