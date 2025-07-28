@@ -1,26 +1,40 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useUser } from '../../contexts/userContext';
+import { useRouter } from 'expo-router';
 
-type Ubicacion = {
-  id: string; // Añadir un identificador único para cada ruta
-  nombre: string;
-  longitud: number;
-  latitud: number;
-  // Puedes añadir más propiedades según lo que devuelva tu API
-  distancia?: number;
-  tiempoEstimado?: string;
+
+
+
+
+
+type Ruta = {
+  id: string;
+  idRecolector: string | null;
+  nombreRecolector: string | null;
+  idAdministrador: string | null;
+  nombreAdministrador: string | null;
+  contenedores: string[];
+  fechaAsignacion: string; // o Date si ya lo parseas como objeto de fecha
 };
 
 export default function Tab() {
-  const [rutas, setRutas] = useState<Ubicacion[]>([]);
+  const { idRecolector } = useUser();
+  const router = useRouter();
+
+
+
+  const [rutas, setRutas] = useState<Ruta[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getAPIdata = async () => {
+
+      
       try {
         const baseURL = "http://192.168.1.68:7168/api";
-        const ApiUrl = "/Contenedor/687b34b05069326da2355afb/ubicacion";
+        const ApiUrl = "/Rutas/RecolectorConNombre/"+idRecolector;
         const result = await axios.get(baseURL + ApiUrl);
         
         // Asegúrate de que la API devuelve un array
@@ -40,69 +54,65 @@ export default function Tab() {
     };
 
     getAPIdata();
-  }, []);
+  }, [idRecolector]);
 
-  const renderItem = ({ item }: { item: Ubicacion }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemTitle}>{item.nombre}</Text>
-      <Text>Coordenadas: {item.latitud}, {item.longitud}</Text>
-      {/* Mostrar información adicional si existe */}
-      {item.distancia && <Text>Distancia: {item.distancia} km</Text>}
-      {item.tiempoEstimado && <Text>Tiempo estimado: {item.tiempoEstimado}</Text>}
-    </View>
-  );
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Cargando rutas...</Text>
-      </View>
-    );
+
+
+
+    if (loading) {
+    return <ActivityIndicator size="large" color="#00f" />;
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Lista de Rutas</Text>
-      
-      {rutas.length > 0 ? (
-        <FlatList
-          data={rutas}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
-      ) : (
-        <Text>No hay rutas disponibles</Text>
-      )}
+    <View className="flex-1 p-4 bg-white">
+      <FlatList
+        data={rutas}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View className="bg-[#c2e2d0] p-4 rounded-2xl mb-3">
+            <Text className="text-lg font-bold">Ruta</Text>
+
+
+            <View className='flex-row justify-around'>
+              <View className=''>
+                <Text>Creador: {item.nombreAdministrador}</Text>
+                <Text>Asignado: {item.nombreRecolector}</Text>
+                <Text>Asignado: {item.fechaAsignacion}</Text>
+              </View>
+
+              <View className=''>
+                <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: '../detalleContenedores',
+            params: {
+              contenedores: JSON.stringify(item.contenedores),
+            },
+          })
+        }
+        className="mt-3 bg-[#F2F2F2] py-2 px-4 rounded-lg self-start"
+      >
+        <Text className=" font-medium">Info</Text>
+      </TouchableOpacity>
+              </View>
+            </View>
+
+
+
+
+            
+
+
+            
+           
+
+
+           
+          </View>
+        )}
+      />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  listContainer: {
-    paddingBottom: 16,
-  },
-  itemContainer: {
-    backgroundColor: '#f9f9f9',
-    padding: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  itemTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-});

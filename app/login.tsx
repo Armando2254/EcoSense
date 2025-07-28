@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { router } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
+import { useUser } from '../contexts/userContext';
 
 
 
 export default function Login() {
+  const router = useRouter();
+  const { setIdRecolector } = useUser();
+
 const obtenerRecolector = async (email: string) => {
                   try {
                     const response = await fetch(`http://192.168.1.68:7168/api/Recolector/por-email?email=${email}`);
                     const data = await response.json();
                   
                     if (data && data.id) {
+                      const id = data.id; 
+                      setIdRecolector(id);
                       // Aquí ya tienes el ID del recolector
                       router.push({
                         pathname: '/(tab)',
@@ -59,11 +65,6 @@ const obtenerRecolector = async (email: string) => {
             <TextInput value={contrasena} onChangeText={setContrasena} id='contra' className='w-80 bg-[#ffffff] rounded-md' placeholder="Password" placeholderTextColor="#A0A0A0" />
 
             <CustomButton onPress={async () => {
-              //esto de aqui es lo que permite en este caso evitar la validacion del login
-              router.push({
-                        pathname: '/(tab)',
-                      });
-                      //
               const response = await fetch('http://192.168.1.68:7168/api/Recolector/login', {
               method: 'POST',
               headers: {

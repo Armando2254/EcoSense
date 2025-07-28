@@ -1,64 +1,120 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Pressable, Modal } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, Pressable, Modal, ActivityIndicator } from 'react-native';
+import { useUser } from '../../contexts/userContext';
 
 export default function PerfilScreen() {
+  const { idRecolector } = useUser();
   const [modalVisible, setModalVisible] = useState(false);
+  const [recolector, setRecolector] = useState<Recolector | null>(null);
+  const [loading, setLoading] = useState(true);
+  // types/Recolector.ts
+  type Recolector = {
+  id: string;
+  nombrePila: string;
+  primerApell: string;
+  segundoApell: string;
+  edad: number;
+  email: string;
+  contrasena: string;
+  status: boolean;
+}
+
+
+
+
+  useEffect(() => {
+    const fetchRecolector = async () => {
+      try {
+        const res = await fetch(`http://192.168.1.68:7168/api/recolector/${idRecolector}`);
+        if (!res.ok) throw new Error('Error al obtener el recolector');
+        const data: Recolector = await res.json();
+        setRecolector(data);
+      } catch (err) {
+        console.error('Error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecolector();
+  }, [idRecolector]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
+
+  if (!recolector) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-red-600 font-bold text-lg">No se pudo cargar el perfil</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      {/* Contenido principal con fondo verde */}
-      <View style={styles.profileCard}>  {/* Este es el contenedor con fondo verde */}
-        <Text style={styles.profileTitle}>Perfil</Text>
-        
-        <Image 
-          source={require('../../assets/images/user-profile.png')} 
-          style={styles.profileImage}
+    <View className="flex-1 bg-white px-5 justify-center">
+      <View className="bg-green-300 rounded-2xl p-6 items-center shadow-md">
+        <Text className="text-2xl font-bold text-black mb-2">Perfil</Text>
+
+        <Image
+          source={require('../../assets/images/user-profile.png')}
+          className="w-28 h-28 rounded-full border-2 border-black my-4"
         />
-        
-        <Text style={styles.profileTitle}>Perfil</Text>
-        
-        <Text style={styles.userName}>Perez Lopez Luisa</Text>
-        <Text style={styles.userEmail}>lusalopez@example.com</Text>
-        
-        <Pressable 
-          style={styles.editButton}
+
+        <Text className="text-lg font-semibold text-black">
+          {recolector.nombrePila} {recolector.primerApell} {recolector.segundoApell}
+        </Text>
+        <Text className="text-base text-black opacity-90 mt-1">{recolector.email}</Text>
+
+        <Pressable
+          className="bg-white mt-5 py-3 px-6 rounded-full"
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.editButtonText}>¿Quieres editar tu perfil?</Text>
+          <Text className="text-black font-bold text-base">¿Quieres editar tu perfil?</Text>
         </Pressable>
-        
-        <Text style={styles.adminText}>Habla con algun administrador</Text>
+
+        <Text className="mt-4 italic text-black opacity-80">Habla con algún administrador</Text>
       </View>
 
-      {/* Modal de edición (se mantiene igual) */}
+      {/* Modal */}
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Editar Perfil</Text>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Nombre:</Text>
-              <Text style={styles.inputValue}>Perez Lopez Luisa</Text>
-            </View>
-            
-            <View style={styles.modalButtons}>
-              <Pressable
-                style={[styles.modalButton, styles.saveButton]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.buttonText}>Guardar</Text>
-              </Pressable>
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white p-5 rounded-xl w-4/5">
+            <Text className="text-xl font-bold text-center mb-5">Editar Perfil</Text>
 
+            <View className="mb-4">
+              <Text className="font-bold text-gray-700 mb-1">Nombre:</Text>
+              <Text className="bg-gray-100 p-3 rounded-md">
+                {recolector.nombrePila} {recolector.primerApell} {recolector.segundoApell}
+              </Text>
+            </View>
+
+            <View className="mb-4">
+              <Text className="font-bold text-gray-700 mb-1">Email:</Text>
+              <Text className="bg-gray-100 p-3 rounded-md">{recolector.email}</Text>
+            </View>
+
+            <View className="flex-row justify-between mt-6">
               <Pressable
-                style={[styles.modalButton, styles.cancelButton]}
+                className="bg-green-600 py-2 px-4 rounded-md"
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.buttonText}>Cancelar</Text>
+                <Text className="text-white font-bold">Guardar</Text>
+              </Pressable>
+              <Pressable
+                className="bg-red-600 py-2 px-4 rounded-md"
+                onPress={() => setModalVisible(false)}
+              >
+                <Text className="text-white font-bold">Cancelar</Text>
               </Pressable>
             </View>
           </View>
@@ -67,119 +123,3 @@ export default function PerfilScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-    justifyContent: 'center',  // Centra verticalmente la tarjeta
-  },
-  profileCard: {
-    backgroundColor: '#79EDAC',  // Fondo verde
-    borderRadius: 15,           // Bordes redondeados
-    padding: 25,               // Espaciado interno
-    alignItems: 'center',
-    elevation: 5,              // Sombra en Android
-    shadowColor: '#000',       // Sombra en iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  profileTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'black',            // Texto blanco para contrastar con el fondo verde
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginVertical: 15,
-    borderWidth: 3,            // Borde blanco para la imagen
-    borderColor: 'black',      //color negro de las letras
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 10,
-    color: 'black',            // Texto negro
-  },
-  userEmail: {
-    fontSize: 16,
-    color: 'black',            // Texto negro
-    marginVertical: 10,
-    opacity: 0.9,              // Ligera transparencia
-  },
-  editButton: {
-    backgroundColor: 'white',   // Fondo blanco para el botón
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    marginTop: 20,
-  },
-  editButtonText: {
-    color: '#000000',          // Texto negro para contrastar con fondo blanco
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  adminText: {
-    marginTop: 15,
-    color: 'black',            // Texto blanco
-    fontStyle: 'italic',
-    opacity: 0.8,
-  },
-  // ... (el resto de los estilos del modal se mantienen igual)
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    marginBottom: 15,
-  },
-  inputLabel: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#555',
-  },
-  inputValue: {
-    backgroundColor: '#f5f5f5',
-    padding: 10,
-    borderRadius: 5,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  saveButton: {
-    backgroundColor: '#4CAF50',
-  },
-  cancelButton: {
-    backgroundColor: '#f44336',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-});
